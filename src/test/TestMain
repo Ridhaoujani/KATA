@@ -1,1 +1,46 @@
+package org.Kata;
 
+import static org.junit.Assert.assertEquals;
+
+import org.example.entities.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.kata.entities.Account;
+import org.kata.entities.Bank;
+import org.kata.entities.Client;
+import org.kata.entities.Transaction;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class TestMain {
+    private Bank bank;
+    private Account clientAccount;
+    private Client client;
+
+    @Before
+    public void setUp() {
+
+        bank = new Bank("Vermeg", new HashMap<Client, Account>());
+        clientAccount = new Account(0.0, new ArrayList<Transaction>());
+        client = new Client("username", "user lastname", clientAccount);
+
+        bank.addAccount(clientAccount, client);
+    }
+
+    @Test
+    public void testTransactionOperations() {
+
+        clientAccount.operation(client.makeTransaction("withdrawal", 100));
+        clientAccount.operation(client.makeTransaction("deposit", 100));
+
+        List<Transaction> allTransactions = clientAccount.getTransactions();
+
+        assertEquals(1, allTransactions.size());
+
+        Transaction secondTransaction = allTransactions.get(0);
+        assertEquals("deposit", secondTransaction.getTransactionType());
+        assertEquals(100.0, secondTransaction.getAmount(), 0.001);
+    }
+}
